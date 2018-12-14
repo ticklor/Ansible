@@ -1,0 +1,22 @@
+---
+# Tasks for installing Docker Community Edition.
+
+- name: install dependencies
+  include_tasks: "os/{{ ansible_os_family }}.yml"
+
+- name: restart and enable service
+  service:
+    name: docker
+    state: restarted
+    enabled: true
+
+- name: download docker compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: "/usr/local/bin/docker-compose"
+    owner: root
+    group: root
+    mode: 0775
+  when: install_docker_compose == True
+  become: yes
+  become_user: root

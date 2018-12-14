@@ -1,0 +1,31 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+#
+# Turn the facts gathering feature off so Ansible will install python2
+# on a machine without python.  Ansible normally doesn't provision
+# machines without python2 being installed.  Turning the gather_facts
+# off forces Ansible to install python on the machine by avoiding normal
+# checks
+#
+  gather_facts: False
+  pre_tasks:
+#
+# Install python2 on machines so Ansible can provision them.  This task
+# will first check and make sure python is not already installed.
+#  
+    - name: install python 2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+#
+# Turn the facts gathering back on so Ansible can collect the necessary
+# information it needs to run playbooks and roles in normal mode. AKA gather_facts
+#      
+    - setup:
+# 
+# Install docker and docker composer on all machines
+#
+  roles:
+    - docker
