@@ -20,3 +20,9 @@
   when: install_docker_compose == True
   become: yes
   become_user: root
+
+- name: add docker to sudo group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
